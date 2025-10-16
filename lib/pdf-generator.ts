@@ -21,9 +21,7 @@ export function generateReportPDF(
   const colorText: [number, number, number] = [40, 40, 40]
   const colorTextLight: [number, number, number] = [100, 100, 100]
 
-  console.log(
-    '📄 Gerando PDF com formatador final v5 (ajustes de fonte e limpeza)...'
-  )
+  console.log('📄 Gerando PDF com correção de tipo para deploy...')
 
   const addFooter = () => {
     doc.setDrawColor(...colorPrimary)
@@ -57,7 +55,6 @@ export function generateReportPDF(
     return false
   }
 
-  // FUNÇÃO DE LIMPEZA CORRIGIDA - Não remove mais o '#' dos títulos
   const cleanText = (text: string): string => {
     const emojiAndSpecialCharRegex =
       /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F004}-\u{1F0CF}\u{1F200}-\u{1F251}%]/gu
@@ -73,7 +70,9 @@ export function generateReportPDF(
     for (const line of lines) {
       checkPageBreak(12)
       let currentX = x
-      const parts = line.split(/(\*\*.*?\*\*)/g).filter(p => p)
+      // CORREÇÃO AQUI: (p: string) => p
+      const parts = line.split(/(\*\*.*?\*\*)/g).filter((p: string) => p)
+
       parts.forEach(part => {
         const isBold = part.startsWith('**') && part.endsWith('**')
         const textPart = isBold ? part.slice(2, -2) : part
@@ -81,7 +80,7 @@ export function generateReportPDF(
         doc.text(textPart, currentX, yPosition)
         currentX += doc.getTextWidth(textPart)
       })
-      yPosition += 12 // Espaçamento entre linhas de um mesmo parágrafo
+      yPosition += 12
     }
   }
 
@@ -136,7 +135,6 @@ export function generateReportPDF(
     const trimmedLine = line.trim()
 
     if (!trimmedLine || trimmedLine === '#') {
-      // Ignora linhas vazias ou com apenas '#'
       continue
     }
 
@@ -146,30 +144,30 @@ export function generateReportPDF(
       yPosition += 15
       doc.setFillColor(...colorPrimary)
       doc.rect(margin, yPosition - 14, maxWidth, 24, 'F')
-      doc.setFontSize(18) // AUMENTADO
+      doc.setFontSize(18)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(255, 255, 255)
       doc.text(trimmedLine.substring(2), margin + 10, yPosition)
       yPosition += 30
     } else if (trimmedLine.startsWith('## ')) {
       yPosition += 15
-      doc.setFillColor(...colorSecondary)
+      doc.setFillColor(colorSecondary[0], colorSecondary[1], colorSecondary[2])
       doc.rect(margin - 10, yPosition - 11, 3, 14, 'F')
-      doc.setFontSize(15) // AUMENTADO
+      doc.setFontSize(15)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...colorSecondary)
       renderLine(trimmedLine.substring(3), margin, { maxWidth })
       yPosition += 8
     } else if (trimmedLine.startsWith('### ')) {
-      yPosition += 10
-      doc.setFontSize(12) // AUMENTADO
+      yPosition += 12
+      doc.setFontSize(12)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...colorPrimary)
       renderLine(trimmedLine.substring(4), margin, { maxWidth })
       yPosition += 6
     } else if (trimmedLine.startsWith('#### ')) {
       yPosition += 8
-      doc.setFontSize(10) // Mantido, mas agora em negrito
+      doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...colorText)
       renderLine(trimmedLine.substring(5), margin, { maxWidth })
@@ -178,7 +176,7 @@ export function generateReportPDF(
       const listText = trimmedLine.substring(2)
       doc.setFillColor(...colorPrimary)
       doc.circle(margin + 3, yPosition - 2, 2, 'F')
-      doc.setFontSize(10) // Fonte padrão para texto de lista
+      doc.setFontSize(10)
       doc.setTextColor(...colorText)
       renderLine(listText, margin + 12, { maxWidth: maxWidth - 12 })
     } else if (trimmedLine.match(/^[-]{3,}$/)) {
@@ -188,7 +186,7 @@ export function generateReportPDF(
       doc.line(margin, yPosition, pageWidth - margin, yPosition)
       yPosition += 15
     } else {
-      doc.setFontSize(10) // Fonte padrão para parágrafos
+      doc.setFontSize(10)
       doc.setTextColor(...colorText)
       renderLine(line, margin, { maxWidth })
       yPosition += 8
