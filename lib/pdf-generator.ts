@@ -72,7 +72,7 @@ export function generateReportPDF(
       let currentX = x
       const parts = line.split(/(\*\*.*?\*\*)/g).filter((p: string) => p)
 
-      // CORREÇÃO AQUI: (part: string)
+      // CORREÇÃO FINAL AQUI: (part: string)
       parts.forEach((part: string) => {
         const isBold = part.startsWith('**') && part.endsWith('**')
         const textPart = isBold ? part.slice(2, -2) : part
