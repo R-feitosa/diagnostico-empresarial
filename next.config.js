@@ -1,19 +1,15 @@
-const path = require('path');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: process.env.NEXT_DIST_DIR || '.next',
-  output: process.env.NEXT_OUTPUT_MODE,
-  experimental: {
-    outputFileTracingRoot: path.join(__dirname, '../'),
-  },
+  // O Next.js e a Vercel já gerem as configurações de output e distDir automaticamente.
+  // Manter apenas o essencial é a melhor prática para o deploy.
+
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true
   },
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: false // Vamos manter isto para garantir a qualidade do código
   },
-  images: { unoptimized: true },
-};
+  images: { unoptimized: true }
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
