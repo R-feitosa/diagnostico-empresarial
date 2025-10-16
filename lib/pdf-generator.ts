@@ -21,7 +21,7 @@ export function generateReportPDF(
   const colorText: [number, number, number] = [40, 40, 40]
   const colorTextLight: [number, number, number] = [100, 100, 100]
 
-  console.log('📄 Gerando PDF com correção de tipo para deploy...')
+  console.log('📄 Gerando PDF com correção de tipo final para deploy...')
 
   const addFooter = () => {
     doc.setDrawColor(...colorPrimary)
@@ -70,10 +70,10 @@ export function generateReportPDF(
     for (const line of lines) {
       checkPageBreak(12)
       let currentX = x
-      // CORREÇÃO AQUI: (p: string) => p
       const parts = line.split(/(\*\*.*?\*\*)/g).filter((p: string) => p)
 
-      parts.forEach(part => {
+      // CORREÇÃO AQUI: (part: string)
+      parts.forEach((part: string) => {
         const isBold = part.startsWith('**') && part.endsWith('**')
         const textPart = isBold ? part.slice(2, -2) : part
         doc.setFont('helvetica', isBold ? 'bold' : 'normal')
